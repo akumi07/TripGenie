@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import CreateTrip from './create-trip'
 import Header from './components/custom/Header'
 import { Toaster } from './components/ui/sonner'
+import Viewtrip from './view-trip/[tripid]'
 
 
 
@@ -19,6 +20,10 @@ const router=createBrowserRouter([
   {
     path:'/create-trip',
     element:<CreateTrip/>
+  },
+  {
+    path:'/view-trip/:tripid',
+    element:<Viewtrip/>
   }
 ]);
 createRoot(document.getElementById('root')).render(

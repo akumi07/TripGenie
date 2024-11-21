@@ -4,6 +4,7 @@ import { AI_PROMPT, selectBudgetOptions, SelectTravelesList } from "@/constants/
 import { chatSession } from "@/service/AIModal";
 import React, { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function CreateTrip() {
@@ -42,7 +43,7 @@ function CreateTrip() {
     const result=await chatSession.sendMessage(Final_Prompt)
     console.log(result?.response?.text());
   };
-
+  
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
       <h2 className="font-bold text-3xl">Tell us your travel preferences 🏕️🌴</h2>
