@@ -30,6 +30,7 @@ function CreateTrip() {
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate=useNavigate()
 
   const handleChange = (name, value) => {
     setFormData({
@@ -84,7 +85,7 @@ function CreateTrip() {
 
     console.log(Final_Prompt);
     
-      console.log("GEMINI_API_KEY:", import.meta.env.VITE_GEMINI_API_KEY);
+      // console.log("GEMINI_API_KEY:", import.meta.env.VITE_GEMINI_API_KEY);
       const result = await chatSession.sendMessage(Final_Prompt, {
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_GEMINI_API_KEY}`,
@@ -100,16 +101,26 @@ function CreateTrip() {
 
   const saveAiTrip = async (TripData) => {
     setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
-    const docId = Date.now().toString();
-    await setDoc(doc(db, "AiTrips", docId), {
-      userSelection: formData,
-      tripData: JSON.parse(TripData),
-      userEmail: user?.email,
-      id: docId,
-    });
-    setLoading(false);
-  };
+    try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const docId = Date.now().toString();
+
+        await setDoc(doc(db, "AiTrips", docId), {
+            userSelection: formData,
+            tripData: TripData, // No need to parse as it's already an object
+            userEmail: user?.email,
+            id: docId,
+        });
+
+        navigate(`/view-trip/${docId}`);
+    } catch (error) {
+        console.error("Error saving AI trip:", error);
+    } finally {
+        setLoading(false);
+    }
+};
+
+
 
   const getUserProfile = (tokenInfo) => {
     axios
