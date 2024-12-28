@@ -24,14 +24,13 @@ import axios from "axios";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
- 
 
 function CreateTrip() {
   const [place, setPlace] = useState();
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (name, value) => {
     setFormData({
@@ -54,16 +53,15 @@ function CreateTrip() {
       toast("Login failed. Please try again.");
     },
   });
-  
 
   const onGenerateTrip = async () => {
     const user = localStorage.getItem("user");
-  
+
     if (!user) {
       setOpenDialog(true);
       return;
     }
-  
+
     if (
       formData?.noOfDays > 7 ||
       !formData?.location ||
@@ -82,109 +80,63 @@ function CreateTrip() {
     )
       .replace("{totalDays}", formData?.noOfDays)
       .replace("{traveler}", formData?.noOfTravellers)
-      .replace("{budget}", formData?.budget)
-      
-  
+      .replace("{budget}", formData?.budget);
+
     console.log(Final_Prompt);
-  
-    
+
     const result = await chatSession.sendMessage(Final_Prompt);
-    console.log("--", result?.response?.text());
-    const jD=cleanJsonData(result?.response?.text());
-    console.log("new JD:",jD)
+    
+    const vt = cleanTripData(result?.response?.text());
     setLoading(false);
-    saveAiTrip(jD);
+    saveAiTrip(vt);
   };
 
   
-    // console.log("API Response:", cleanTripData(result?.response?.text()));
-  
-    // setLoading(false);
-  
-    // // Clean the trip data before saving
-    // const cleanedTripData = cleanTripData(result?.response?.text());
-  
-    // saveAiTrip(cleanedTripData);
-  // };
-  
-  
+
   const cleanTripData = (tripData) => {
     try {
-      console.log("Original Trip Data:", tripData);  
-  
-      
+      console.log("Original Trip Data:", tripData);
+
+      // Remove backticks and anything before the first '{'
       let cleanedData = tripData
-        .replace(/`/g, '')
-        .replace(/^[^\{]+/, '')
-       
-        .trim();                 
-  
-      
-  
-      console.log("Cleaned Trip Data:", cleanedData);  
-  
-     
-      // const postCleanedData=cleanedData.replace(/[^ \t\n\r]/g, "");
+        .replace(/`/g, "") // Remove backticks
+        .replace(/^[^{]+/, "") // Remove everything before the first `{`
+        .replace(/[^}]*$/, "") // Remove everything after the last `}`
+        .trim();
+      // Trim whitespace
+
+      console.log("Cleaned Trip Data:", cleanedData);
+
+      // Check if cleanedData is a valid JSON string
+      if (!cleanedData.startsWith("{") || !cleanedData.endsWith("}")) {
+        throw new Error("Invalid JSON structure after cleaning.");
+      }
+
+      // Parse the cleaned JSON string
       const jsonData = JSON.parse(cleanedData);
-      // console.log("jsonData:", jsonData)
-      
-      // Return the cleaned data as a JavaScript object
-      return jsonData;
+
+      return jsonData; // Return the parsed object
     } catch (error) {
-      console.error("Error cleaning trip data:", error);
-      return {};  // Return an empty object in case of an error
+      console.error("Error cleaning trip data:", error.message);
+      return {}; // Return an empty object in case of an error
     }
   };
 
-  const cleanJsonData = (rawData) => {
-    return rawData.map(item => {
-      // Remove any comments or unnecessary keys
-      const cleanedItem = { ...item };
-      
-      // Ensure geoCoordinates is always present in the right format
-      if (!cleanedItem.geoCoordinates) {
-        cleanedItem.geoCoordinates = {
-          latitude: 0,
-          longitude: 0
-        };
-      }
-      
-      // Clean 'ticketPricing' format (assume string or number and clean it up)
-      if (cleanedItem.ticketPricing) {
-        cleanedItem.ticketPricing = cleanedItem.ticketPricing.toString().replace(/[^\d\.\,]+/g, '');
-      }
-      
-      // Ensure rating is in a specific format (i.e., "X stars")
-      if (cleanedItem.rating && !cleanedItem.rating.includes("stars")) {
-        cleanedItem.rating = `${cleanedItem.rating} stars`;
-      }
-      
-      // Return the cleaned item
-      return cleanedItem;
-    });
-  };
   
 
-  
-  
-  
-  
-  
-  
-  
   const saveAiTrip = async (TripData) => {
     setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const docId = Date.now().toString();
-  
+
       await setDoc(doc(db, "AiTrips", docId), {
         userSelection: formData,
         tripData: TripData, // Save the cleaned trip data
         userEmail: user?.email,
         id: docId,
       });
-  
+
       navigate(`/view-trip/${docId}`);
     } catch (error) {
       console.error("Error saving AI trip:", error);
@@ -192,16 +144,6 @@ function CreateTrip() {
       setLoading(false);
     }
   };
-  
-
-
-
-
-
-
-
-
-
 
   const getUserProfile = (tokenInfo) => {
     axios
@@ -225,7 +167,7 @@ function CreateTrip() {
         toast("Failed to fetch user profile. Please try again.");
       });
   };
-  
+
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
       <h2 className="font-bold text-3xl">
@@ -306,14 +248,13 @@ function CreateTrip() {
         </div>
       </div>
       <div className="my-10 flex justify-end">
-      <Button disabled={loading} onClick={onGenerateTrip}>
-  {loading ? (
-    <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
-  ) : (
-    "Generate Trip"
-  )}
-  
-</Button>
+        <Button disabled={loading} onClick={onGenerateTrip}>
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
       </div>
       <Dialog open={openDialog}>
         <DialogContent>
@@ -340,8 +281,6 @@ function CreateTrip() {
 }
 
 export default CreateTrip;
-
-
 
 // import React, { useEffect, useState } from "react";
 // import GooglePlacesAutocomplete from "react-google-places-autocomplete";
