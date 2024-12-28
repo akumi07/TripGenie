@@ -56,4 +56,10 @@ export const selectBudgetOptions=[
 
 ]
 
-export const AI_PROMPT='Generate travel Plan for Location: {location},for {totalDays}days for{Traveller}person with a budget {budget},,Give me a Hotels options list with HotelName, Hotel address, Price, hotel image uri, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Uri, Geo Coordinates, ticket Pricing, rating, Time travel each of the location for {totalDays}days with each day plan with best time to visit in json format please make sure it should in json format no backtick not any error i want the repsonse should be strictly json so that i can directly save in db please use indian currency'
+export const AI_PROMPT = `
+  Generate a travel plan for the destination: {location} for {totalDays} days. 
+  Traveler type: {traveler}, with a {budget} budget. 
+  Provide a list of hotel options including the name, address, and the most recent image URL (ensure the URL is working), geo coordinates, rating, and descriptions. 
+  Suggest a daily itinerary with place names, details, image URLs, geo coordinates, ticket pricing, ratings, and travel time for each location for {totalDays} days, including the best time to visit. 
+  Output in JSON format.
+`;
