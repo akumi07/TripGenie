@@ -14,6 +14,7 @@ function Hotel({trip}) {
           
         </div>
         <h3>hello</h3>
+        <h4>task complete</h4>
     </div>
   )
 }
