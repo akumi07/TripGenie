@@ -13,6 +13,7 @@ function Hotel({trip}) {
           ))}
           
         </div>
+        <h3>hello</h3>
     </div>
   )
 }
