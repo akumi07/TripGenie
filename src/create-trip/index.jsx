@@ -63,7 +63,7 @@ function CreateTrip() {
     }
 
     if (
-      formData?.noOfDays > 7 ||
+      formData?.noOfDays > 5 ||
       !formData?.location ||
       !formData?.budget ||
       !formData?.noOfTravellers
@@ -103,34 +103,81 @@ function CreateTrip() {
   // saveAiTrip(cleanedTripData);
   // };
 
+  // const cleanTripData = (tripData) => {
+  //   try {
+  //     console.log("Original Trip Data:", tripData);
+
+  //     // Remove backticks and anything before the first '{'
+  //     let cleanedData = tripData
+  //       .replace(/`/g, "") // Remove backticks
+  //       .replace(/^[^{]+/, "") // Remove everything before the first `{`
+  //       .replace(/[^}]*$/, "") // Remove everything after the last `}`
+  //       .trim();
+  //     // Trim whitespace
+
+  //     console.log("Cleaned Trip Data:", cleanedData);
+
+  //     // Check if cleanedData is a valid JSON string
+  //     if (!cleanedData.startsWith("{") || !cleanedData.endsWith("}")) {
+  //       throw new Error("Invalid JSON structure after cleaning.");
+  //     }
+
+  //     // Parse the cleaned JSON string
+  //     const jsonData = JSON.parse(cleanedData);
+
+  //     return jsonData; // Return the parsed object
+  //   } catch (error) {
+  //     console.error("Error cleaning trip data:", error.message);
+  //     return {}; // Return an empty object in case of an error
+  //   }
+  // };
+
   const cleanTripData = (tripData) => {
     try {
       console.log("Original Trip Data:", tripData);
-
-      // Remove backticks and anything before the first '{'
+  
+      // Step 1: Remove backticks and trim whitespace
       let cleanedData = tripData
         .replace(/`/g, "") // Remove backticks
         .replace(/^[^{]+/, "") // Remove everything before the first `{`
-        .replace(/[^}]*$/, "") // Remove everything after the last `}`
+        .replace(/[^}]*$/, "") // Remove everything after the last `}`)
         .trim();
-      // Trim whitespace
-
-      console.log("Cleaned Trip Data:", cleanedData);
-
-      // Check if cleanedData is a valid JSON string
+  
+      console.log("After Initial Cleaning:", cleanedData);
+  
+      // Step 2: Remove inline comments (anything starting with // until the end of the line)
+      cleanedData = cleanedData.replace(/\/\/[^\n]*\n?/g, "");
+  
+      // Step 3: Fix missing commas between array elements
+      cleanedData = cleanedData.replace(/}\s*{/g, "},{"); // Ensure objects in arrays are comma-separated
+  
+      // Step 4: Remove trailing commas in objects and arrays
+      cleanedData = cleanedData.replace(/,\s*([\]}])/g, "$1"); // Remove commas before closing brackets
+  
+      // Step 5: Validate JSON structure
       if (!cleanedData.startsWith("{") || !cleanedData.endsWith("}")) {
         throw new Error("Invalid JSON structure after cleaning.");
       }
-
-      // Parse the cleaned JSON string
+  
+      console.log("Cleaned Trip Data Before Parsing:", cleanedData);
+  
+      // Step 6: Parse the cleaned JSON string
       const jsonData = JSON.parse(cleanedData);
-
+  
+      // Step 7: Optional deep validation (check required fields or structure)
+      if (!jsonData.destination || !Array.isArray(jsonData.hotelOptions)) {
+        throw new Error("Missing required fields or invalid structure.");
+      }
+  
       return jsonData; // Return the parsed object
     } catch (error) {
       console.error("Error cleaning trip data:", error.message);
       return {}; // Return an empty object in case of an error
     }
   };
+  
+  
+  
 
   // const cleanJsonData = (rawData) => {
   //   return rawData.map(item => {

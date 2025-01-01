@@ -56,10 +56,36 @@ export const selectBudgetOptions=[
 
 ]
 
+// export const AI_PROMPT = `
+//   Generate a travel plan for the destination: {location} for {totalDays} days. 
+//   Traveler type: {traveler}, with a {budget} budget. 
+//   Provide a list of minumum 3-4 hotel options name, address, and the most recent image URL (ensure the URL is working), geo coordinates, rating,pricing  and descriptions. 
+//   Suggest a daily itinerary with place names, details, image URLs, geo coordinates, ticket pricing, ratings, and travel time for each location for {totalDays} days, including the best time to visit. 
+//   Output in JSON format.
+// `;
+
 export const AI_PROMPT = `
-  Generate a travel plan for the destination: {location} for {totalDays} days. 
+  Generate a comprehensive travel plan for the destination: {location} for {totalDays} days. 
   Traveler type: {traveler}, with a {budget} budget. 
-  Provide a list of hotel options including the name, address, and the most recent image URL (ensure the URL is working), geo coordinates, rating, and descriptions. 
-  Suggest a daily itinerary with place names, details, image URLs, geo coordinates, ticket pricing, ratings, and travel time for each location for {totalDays} days, including the best time to visit. 
-  Output in JSON format.
-`;
+  Provide a list of **at least 3-4 hotel options** with the following details for each:
+  - Hotel name (ensure it is realistic and exists for the given location, even for budget options).
+  - Address (specific and accurate, not placeholders).
+  - The most recent image URL (ensure the URL is working and relevant to the hotel).
+  - Geo coordinates (latitude and longitude).
+  - Rating (realistic values between 1-5 stars).
+  - Pricing (adjusted for the given budget).
+  - Description (specific, accurate, and detailed, especially for budget or cheap options).
+
+  Suggest a detailed daily itinerary for {totalDays} days, including:
+  - Place names (popular attractions, landmarks, or experiences).
+  - Detailed descriptions of each location or activity.
+  - Image URLs (ensure they are working and relevant to the place).
+  - Geo coordinates for each location (latitude and longitude).
+  - Ticket pricing (accurate and adjusted for budget or free options where applicable).
+  - Ratings (realistic and based on traveler feedback or popularity).
+  - Travel time for each location (between attractions or activities).
+  - The best time to visit the destination overall and for specific attractions.
+
+  Ensure all output is provided in valid JSON format without errors.
+  If {budget} is "cheap" or "budget," ensure realistic but economical options for hotels and activities while maintaining quality.
+  `;

@@ -8,14 +8,17 @@ function Hotel({trip}) {
           {trip?.tripData?.hotelOptions?.map((item,index)=>(
             <div>
               <img src='/placeholder.jpg' className='rounded-xl'/>
+              <div class="my-2 flex flex-col gap-2">
+                <h2 class="font-medium">{item.hotelName}</h2>
+                <h2 class="text-xs text-gray-500">📍{item.hotelAddress}</h2>
+                <h2 class="text-sm">💰 {item.price}</h2>
+              </div>
             </div>
 
           ))}
           
         </div>
-        <h3>hello</h3>
-        <h4>task complete</h4>
-        <h5>task done</h5>
+        
     </div>
   )
 }
