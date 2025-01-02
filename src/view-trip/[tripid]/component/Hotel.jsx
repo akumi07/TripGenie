@@ -13,6 +13,7 @@ function Hotel({trip}) {
                 <h2 class="text-xs text-gray-500">📍{item.hotelAddress}</h2>
                 <h2 class="text-sm">💰 {item.price}</h2>
                 <h2 class="text-sm">⭐{item.rating}</h2>
+                <h2>hello</h2>
               </div>
             </div>
 
